@@ -26,7 +26,6 @@ func TestScanner(t *testing.T) {
 		{")", lexer.BRACKETRIGHT, ")"},
 
 		// keywords
-		{"FROM", lexer.FROM, "FROM"},
 		{"SUM", lexer.SUM, "SUM"},
 
 		// Identifiers

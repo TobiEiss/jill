@@ -55,7 +55,7 @@ func (scanner *Scanner) scanIdent() (tok Token, lit string) {
 	for {
 		if character := scanner.read(); character == eof {
 			break
-		} else if !isLetter(character) && !isDigit(character) && character != '_' {
+		} else if !isLetter(character) && !isDigit(character) && !isAllowedSpecialCharacter(character) {
 			scanner.unread()
 			break
 		} else {
@@ -122,4 +122,9 @@ func isLetter(ch rune) bool {
 // isDigit returns true if the rune is a digit.
 func isDigit(ch rune) bool {
 	return (ch >= '0' && ch <= '9')
+}
+
+// isAllowedSpecialCharacter returns true if the rune is a allowed character
+func isAllowedSpecialCharacter(ch rune) bool {
+	return (ch == '_' || ch == '.')
 }

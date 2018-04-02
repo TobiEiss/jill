@@ -12,8 +12,8 @@ const (
 
 	BRACKETLEFT  // (
 	BRACKETRIGHT // )
+	COMMA        // ,
 
-	FROM
 	SUM
 )
 
@@ -24,10 +24,10 @@ var eof = rune(0)
 var MiscCharMap = map[rune]Token{
 	'(': BRACKETLEFT,
 	')': BRACKETRIGHT,
+	',': COMMA,
 }
 
 // KeyWordMap is a map from the string to the Token
 var KeyWordMap = map[string]Token{
-	"FROM": FROM,
-	"SUM":  SUM,
+	"SUM": SUM,
 }
