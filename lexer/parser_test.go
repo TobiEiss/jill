@@ -1,7 +1,6 @@
 package lexer_test
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/TobiEiss/jill/lexer"
@@ -10,28 +9,31 @@ import (
 func TestLegalStatements(t *testing.T) {
 	var tests = []struct {
 		Statement string
-		legal     bool
+		ErrorType lexer.ErrorType
 	}{
 		// legal cases
-		{"SUM ( json1.field1, json2.field2 )", true},
-		{"SUM ( json1.field1, json2.field2, json3.field1 )", true},
-		{"SUM ( json1.field1, json2.field2, SUM ( json3.field1, json3.field2 ) )", true},
-		{"SUM ( json1.field1, json2.field2, SUM ( json3.field2 ) )", true},
-		{"SUM(json1.field1,json2.field2,SUM(json3.field2))", true},
-		{"SUM ( json1.field1, json2.field2, ADD ( json3.field2 ) )", true},
-		{"ADD ( ADD ( json3.field2 ) )", true},
+		{Statement: "SUM ( json1.field1, json2.field2 )"},
+		{Statement: "SUM ( json1.field1, json2.field2, json3.field1 )"},
+		{Statement: "SUM ( json1.field1, json2.field2, SUM ( json3.field1, json3.field2 ) )"},
+		{Statement: "SUM ( json1.field1, json2.field2, SUM ( json3.field2 ) )"},
+		{Statement: "SUM(json1.field1,json2.field2,SUM(json3.field2))"},
+		{Statement: "SUM ( json1.field1, json2.field2, ADD ( json3.field2 ) )"},
+		{Statement: "ADD ( ADD ( json3.field2 ) )"},
 
 		// illegal cases
-		{"SUMM ( json1.field1, json2.field2 )", false},
-		{"SUM ( )", false},
-		{"SUM", false},
+		{"SUMM ( json1.field1, json2.field2 )", lexer.ILLEGALTOKEN},
+		{"SUM ( )", lexer.MISSINGARGUMENT},
+		{"SUM", lexer.ILLEGALTOKEN},
 	}
 
 	// iterate all tests
 	for index, test := range tests {
-		_, err := lexer.NewParser(strings.NewReader(test.Statement)).Parse()
-		if (err != nil) == test.legal {
-			t.Errorf("%d failed: %s", index, err)
+		_, err := lexer.NewParser(test.Statement).Parse()
+		if lexerError, ok := err.(*lexer.Error); ok {
+			if lexerError.ErrorType != test.ErrorType {
+				t.Errorf("%d failed: Not expected error: %s", index, err)
+			}
+			// error was expected
 		}
 	}
 }

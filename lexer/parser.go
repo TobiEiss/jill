@@ -1,8 +1,7 @@
 package lexer
 
 import (
-	"fmt"
-	"io"
+	"strings"
 )
 
 // Statement represents jill-statement
@@ -23,15 +22,16 @@ type Parser struct {
 }
 
 // NewParser returns a new instance of Parser.
-func NewParser(reader io.Reader) *Parser {
+func NewParser(statement string) *Parser {
+	reader := strings.NewReader(statement)
 	return &Parser{scanner: NewScanner(reader)}
 }
 
 // Parse parses a jill statement.
 func (parser *Parser) Parse() (*Statement, error) {
-	token, literal := parser.scanIgnoreWhitespace()
+	token, _ := parser.scanIgnoreWhitespace()
 	if !isTokenAKeyWord(token) {
-		return nil, fmt.Errorf("found %q, expected field", literal)
+		return nil, parser.createError(ILLEGALTOKEN)
 	}
 
 	return findStatement(parser, token)
@@ -41,11 +41,11 @@ func (parser *Parser) Parse() (*Statement, error) {
 func findStatement(parser *Parser, function Token) (*Statement, error) {
 	stmt := &Statement{Function: function, Fields: []string{}, Statements: []*Statement{}}
 	// read a field
-	token, literal := parser.scanIgnoreWhitespace()
+	token, _ := parser.scanIgnoreWhitespace()
 
 	// check if token is legal
 	if token == ILLEGAL || token != BRACKETLEFT {
-		return nil, fmt.Errorf("found %q, expected field", literal)
+		return nil, parser.createError(ILLEGALTOKEN)
 	}
 
 	// collect fields
@@ -62,7 +62,7 @@ func findStatement(parser *Parser, function Token) (*Statement, error) {
 			}
 			stmt.Statements = append(stmt.Statements, innerStmt)
 		} else {
-			return nil, fmt.Errorf("missing argument")
+			return nil, parser.createError(MISSINGARGUMENT)
 		}
 
 		// next have to be COMMA or BRACKETRIGHT
@@ -71,7 +71,7 @@ func findStatement(parser *Parser, function Token) (*Statement, error) {
 		if token == BRACKETRIGHT {
 			break
 		} else if token != COMMA {
-			return nil, fmt.Errorf("found %q, expected field", literal)
+			return nil, parser.createError(ILLEGALTOKEN)
 		}
 	}
 	return stmt, nil
@@ -106,4 +106,8 @@ func (parser *Parser) scanIgnoreWhitespace() (token Token, literal string) {
 // unscan pushes the previously read token back onto the buffer.
 func (parser *Parser) unscan() {
 	parser.buf.buffersize = 1
+}
+
+func (parser *Parser) createError(errorType ErrorType) *Error {
+	return &Error{ErrorType: errorType}
 }
