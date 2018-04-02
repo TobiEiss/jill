@@ -15,6 +15,7 @@ const (
 	COMMA        // ,
 
 	SUM
+	ADD
 )
 
 // eof represents a marker rune for the end of the reader.
@@ -30,4 +31,14 @@ var MiscCharMap = map[rune]Token{
 // KeyWordMap is a map from the string to the Token
 var KeyWordMap = map[string]Token{
 	"SUM": SUM,
+	"ADD": ADD,
+}
+
+func isTokenAKeyWord(token Token) bool {
+	for _, value := range KeyWordMap {
+		if value == token {
+			return true
+		}
+	}
+	return false
 }

@@ -18,6 +18,8 @@ func TestLegalStatements(t *testing.T) {
 		{"SUM ( json1.field1, json2.field2, SUM ( json3.field1, json3.field2 ) )", true},
 		{"SUM ( json1.field1, json2.field2, SUM ( json3.field2 ) )", true},
 		{"SUM(json1.field1,json2.field2,SUM(json3.field2))", true},
+		{"SUM ( json1.field1, json2.field2, ADD ( json3.field2 ) )", true},
+		{"ADD ( ADD ( json3.field2 ) )", true},
 
 		// illegal cases
 		{"SUMM ( json1.field1, json2.field2 )", false},

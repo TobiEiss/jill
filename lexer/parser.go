@@ -30,13 +30,14 @@ func NewParser(reader io.Reader) *Parser {
 // Parse parses a jill statement.
 func (parser *Parser) Parse() (*Statement, error) {
 	token, literal := parser.scanIgnoreWhitespace()
-	if token != SUM {
+	if !isTokenAKeyWord(token) {
 		return nil, fmt.Errorf("found %q, expected field", literal)
 	}
 
 	return findStatement(parser, token)
 }
 
+// findStatement is a recursive function to build a jill-statement
 func findStatement(parser *Parser, function Token) (*Statement, error) {
 	stmt := &Statement{Function: function, Fields: []string{}, Statements: []*Statement{}}
 	// read a field
@@ -54,7 +55,7 @@ func findStatement(parser *Parser, function Token) (*Statement, error) {
 		// if token is an ident add statement with function "IDENT"
 		if token == IDENT {
 			stmt.Fields = append(stmt.Fields, literal)
-		} else if token == SUM { // if there is a new function:
+		} else if isTokenAKeyWord(token) { // if there is a new keyword
 			innerStmt, err := findStatement(parser, token)
 			if err != nil {
 				return nil, err
