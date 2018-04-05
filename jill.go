@@ -63,7 +63,7 @@ func (container *Container) apply(stmt *lexer.Statement) (interface{}, error) {
 	}
 
 	// choose correct function
-	function := functions.FunctionsMap[lexer.ADD]
+	function := functions.FunctionsMap[stmt.Function]
 	switch results[0].Type.Kind() {
 	case reflect.Float64:
 		number1 := results[0].Value.(float64)

@@ -25,7 +25,7 @@ func TestJill(t *testing.T) {
 	}
 
 	// query
-	result, err := container.Query("SUM ( outter.inner.value1, outter.alsoInner.value1 )")
+	result, err := container.Query("ADD ( outter.inner.value1, outter.alsoInner.value1 )")
 	if err != nil {
 		t.Errorf("Error while query json: %s", err)
 	}
