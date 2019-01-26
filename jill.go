@@ -23,7 +23,7 @@ func ParseJSON(content []byte) (*Container, error) {
 
 // Query the container
 func (container *Container) Query(query string) (interface{}, error) {
-	stmt, err := lexer.NewParser(query).Parse()
+	stmt, err := lexer.NewParser(query).ParseStatement()
 	if err != nil {
 		return nil, err
 	}

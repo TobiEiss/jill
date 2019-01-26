@@ -27,8 +27,8 @@ func NewParser(statement string) *Parser {
 	return &Parser{scanner: NewScanner(reader)}
 }
 
-// Parse parses a jill statement.
-func (parser *Parser) Parse() (*Statement, error) {
+// ParseStatement parses a jill statement.
+func (parser *Parser) ParseStatement() (*Statement, error) {
 	token, _ := parser.scanIgnoreWhitespace()
 	if !isTokenAKeyWord(token) {
 		return nil, parser.createError(ILLEGALTOKEN)
